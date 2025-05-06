@@ -1,16 +1,18 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm> //needed for the bonus task
+#include <algorithm> // For managing priority queue with heap functions
 using namespace std;
 
+// A regular patient in the hospital
 struct Patient {
     int ID;
     string name;
     int age;
     string condition;
-    Patient* next; 
-    
+    Patient* next; // Points to the next patient in the list
+
+    // Constructor to set up a new patient
     Patient(int Pid, string Pname, int Page, string Pcondition) {
         ID = Pid;
         name = Pname;
@@ -20,16 +22,17 @@ struct Patient {
     }
 };
 
+// Manages a list of general patients using a linked list
 class PatientList {
 private:
-    Patient* head;
+    Patient* head; // First patient in the list
 
 public:
     PatientList() {
         head = nullptr;
     }
 
-
+    // Adds a new patient to the end of the list
     void addPatient(int id, string name, int age, string condition) {
         Patient* newPatient = new Patient(id, name, age, condition);
         if (!head) {
@@ -44,7 +47,7 @@ public:
         cout << "Patient added successfully.\n";
     }
 
-    
+    // Shows all patients in the list
     void displayPatients() {
         if (!head) {
             cout << "No patients in the system.\n";
@@ -58,18 +61,9 @@ public:
             temp = temp->next;
         }
     }
-
-    ~PatientList() {
-        Patient* temp;
-        while (head) {
-            temp = head;
-            head = head->next;
-            delete temp;
-        }
-    }
 };
 
-
+// Represents a patient in the emergency room
 struct EmergencyPatient {
     int id;
     string name;
@@ -84,6 +78,7 @@ struct EmergencyPatient {
     }
 };
 
+// Manages the queue of emergency patients (FIFO)
 class EmergencyRoomQueue {
 private:
     EmergencyPatient* front;
@@ -94,7 +89,7 @@ public:
         front = rear = nullptr;
     }
 
-    
+    // Adds a new emergency patient to the queue
     void enqueue(int id, string name, string condition) {
         EmergencyPatient* newPatient = new EmergencyPatient(id, name, condition);
         if (!rear) {
@@ -106,7 +101,7 @@ public:
         cout << "Emergency patient added to queue.\n";
     }
 
-    
+    // Removes the first patient from the queue (treated)
     void dequeue() {
         if (!front) {
             cout << "No emergency patients in queue.\n";
@@ -119,7 +114,7 @@ public:
         delete temp;
     }
 
-    
+    // Shows all emergency patients waiting
     void displayQueue() {
         if (!front) {
             cout << "Emergency queue is empty.\n";
@@ -133,19 +128,9 @@ public:
             temp = temp->next;
         }
     }
-
-   
-    ~EmergencyRoomQueue() {
-        EmergencyPatient* temp;
-        while (front) {
-            temp = front;
-            front = front->next;
-            delete temp;
-        }
-    }
 };
 
-
+// Holds details about a treatment given to a patient
 struct Treatment {
     int patientId;
     string treatmentDetails;
@@ -158,6 +143,7 @@ struct Treatment {
     }
 };
 
+// Manages treatment history using a stack (LIFO)
 class TreatmentStack {
 private:
     Treatment* top;
@@ -167,7 +153,7 @@ public:
         top = nullptr;
     }
 
-    
+    // Adds a new treatment to the history (on top of the stack)
     void push(int id, string details) {
         Treatment* newTreatment = new Treatment(id, details);
         newTreatment->next = top;
@@ -175,7 +161,7 @@ public:
         cout << "Treatment added to history.\n";
     }
 
-    
+    // Removes the most recent treatment (undo last treatment)
     void pop() {
         if (!top) {
             cout << "No treatments to undo.\n";
@@ -188,7 +174,7 @@ public:
         delete temp;
     }
 
- 
+    // Displays the full treatment history
     void display() {
         if (!top) {
             cout << "No treatment history.\n";
@@ -201,37 +187,27 @@ public:
             temp = temp->next;
         }
     }
-
-    
-
-    ~TreatmentStack() {
-        Treatment* temp;
-        while (top) {
-            temp = top;
-            top = top->next;
-            delete temp;
-        }
-    }
 };
 
-
+// Represents a patient in critical condition
 struct CriticalPatient {
     int id;
     string name;
-    int severity;  
+    int severity;  // Lower number = more critical
 };
 
+// Manages critical patients using a priority queue (min-heap based on severity)
 class CriticalQueue {
 private:
     vector<CriticalPatient> heap;
 
-    
+    // Custom comparison to build a min-heap (lowest severity = highest priority)
     static bool compare(CriticalPatient a, CriticalPatient b) {
-        return a.severity > b.severity; 
+        return a.severity > b.severity;
     }
 
 public:
-  
+    // Adds a new critical patient to the queue
     void addCriticalPatient(int id, string name, int severity) {
         CriticalPatient p = {id, name, severity};
         heap.push_back(p);
@@ -239,7 +215,7 @@ public:
         cout << "Critical patient added with severity " << severity << ".\n";
     }
 
-    
+    // Treats the most critical patient (smallest severity value)
     void treatCriticalPatient() {
         if (heap.empty()) {
             cout << "No critical patients to treat.\n";
@@ -251,7 +227,7 @@ public:
         cout << "Treated critical patient: " << p.name << " (Severity: " << p.severity << ")\n";
     }
 
-    
+    // Shows all critical patients in the system
     void displayCriticalQueue() {
         if (heap.empty()) {
             cout << "No critical patients.\n";
@@ -264,6 +240,7 @@ public:
     }
 };
 
+// Menu system to use hospital features
 int main() {
     PatientList patientList;
     EmergencyRoomQueue emergencyQueue;
@@ -290,7 +267,7 @@ int main() {
         cout << "0. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
-        cin.ignore(); 
+        cin.ignore(); // Clear newline character
 
         if (choice == 0) {
             cout << "Exiting program.\n";
@@ -304,12 +281,12 @@ int main() {
             case 1:
                 cout << "Enter Patient ID: ";
                 cin >> id;
-                cin.ignore(); 
+                cin.ignore();
                 cout << "Enter Name: ";
                 getline(cin, name);
                 cout << "Enter Age: ";
                 cin >> age;
-                cin.ignore();  
+                cin.ignore();
                 cout << "Enter Condition: ";
                 getline(cin, condition);
                 patientList.addPatient(id, name, age, condition);
@@ -322,7 +299,7 @@ int main() {
             case 3:
                 cout << "Enter Patient ID: ";
                 cin >> id;
-                cin.ignore(); 
+                cin.ignore();
                 cout << "Enter Name: ";
                 getline(cin, name);
                 cout << "Enter Condition: ";
@@ -341,7 +318,7 @@ int main() {
             case 6:
                 cout << "Enter Patient ID: ";
                 cin >> id;
-                cin.ignore(); 
+                cin.ignore();
                 cout << "Enter Treatment Details: ";
                 getline(cin, treatment);
                 treatmentStack.push(id, treatment);
@@ -358,10 +335,10 @@ int main() {
             case 9:
                 cout << "Enter Patient ID: ";
                 cin >> id;
-                cin.ignore();  
+                cin.ignore();
                 cout << "Enter Name: ";
                 getline(cin, name);
-                cout << "Enter Severity (1=most critical): ";
+                cout << "Enter Severity (1 = most critical): ";
                 cin >> severity;
                 criticalQueue.addCriticalPatient(id, name, severity);
                 break;
